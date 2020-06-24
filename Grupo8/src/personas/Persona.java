@@ -3,6 +3,7 @@ package personas;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import agregado.Celular;
 import agregado.DecoratorAgregado;
@@ -13,7 +14,7 @@ import interfaces.I_Pago;
 import servicios.Domicilio;
 import servicios.Factura;
 import servicios.I_ColeccionDeFacturas;
-import servicios.I_Factura;
+
 
 import servicios.Internet100;
 import servicios.Internet500;
@@ -28,10 +29,10 @@ import servicios.Servicio;
 public abstract class Persona implements Cloneable{
 	
 	private String nombre;
-	protected ArrayList<I_Contratable> coleccionContrataciones;
+	protected ArrayList<I_Contratable> listaContrataciones;
 	protected I_ColeccionDeFacturas coleccionDeFacturas;
-	protected double totalSinP;
-	protected double totalConP;
+	//protected HashMap<Integer,Factura> coleccionDeFacturas;
+	
 
     
 	/**
@@ -42,11 +43,8 @@ public abstract class Persona implements Cloneable{
 	public Persona(String nombre) {
 		this.nombre = nombre;
 		this.coleccionDeFacturas= new ListaFacturas();
-		this.coleccionContrataciones= new ArrayList<I_Contratable>();
-		this.totalSinP=0;
-		this.totalConP=0;
-
-		
+		//this.coleccionDeFacturas= new HashMap<Integer,Factura>();
+		this.listaContrataciones= new ArrayList<I_Contratable>();
 	}
 
 	public String getNombre() {
@@ -70,13 +68,7 @@ public abstract class Persona implements Cloneable{
 		this.listaContrataciones = listaContrataciones;
 	}
 
-	public I_ColeccionDeFacturas getColeccionDeFacturas() {
-		return coleccionDeFacturas;
-	}
-
-	public void setColeccionDeFacturas(I_ColeccionDeFacturas coleccionDeFacturas) {
-		this.coleccionDeFacturas = coleccionDeFacturas;
-	}
+	
 
 	/**
 	 *Metodo de clonacion condicional
@@ -105,7 +97,7 @@ public abstract class Persona implements Cloneable{
 	 * @param iContratable : Parametro que sera agregado a nuestra factura
 	 */
 	public void nuevaContratacion(I_Contratable iContratable) {
-    	this.coleccionContrataciones.add(iContratable);
+    	this.listaContrataciones.add(iContratable);
 
     }
 	
@@ -118,11 +110,11 @@ public abstract class Persona implements Cloneable{
 	 */
 	public int buscaContratacion(String domicilioPersona) { 
 		int res=0;
-		if (!this.coleccionContrataciones.isEmpty()) {
+		if (!this.listaContrataciones.isEmpty()) {
 			int i=0;
-			while(i<this.coleccionContrataciones.size() && this.coleccionContrataciones.get(i).getDomicilio().getDireccion().equals(domicilioPersona) ) 
+			while(i<this.listaContrataciones.size() && this.listaContrataciones.get(i).getDomicilio().getDireccion().equals(domicilioPersona) ) 
 				i++;
-			if (i<this.coleccionContrataciones.size())
+			if (i<this.listaContrataciones.size())
 
 				res=i;
 		}
@@ -142,7 +134,7 @@ public abstract class Persona implements Cloneable{
 		int cantCelulares=0,cantFijo=0,cantTV=0;									
 		accion=accion.toUpperCase();
 		servicio=servicio.toUpperCase();
-		I_Contratable contratable= this.coleccionContrataciones.get(pos);
+		I_Contratable contratable= this.listaContrataciones.get(pos);
 
 		while(contratable.isCelular() || contratable.isTelefono() || contratable.isTV_Cable()) { 
 			DecoratorAgregado decorador= (DecoratorAgregado) contratable;
@@ -195,7 +187,7 @@ public abstract class Persona implements Cloneable{
 			I_Contratable auxreemplazo= new Telefono(cantTV,reemplazo);
 			reemplazo=auxreemplazo;
 		}
-		this.coleccionContrataciones.set(pos, reemplazo);
+		this.listaContrataciones.set(pos, reemplazo);
 
 	}
 	
@@ -206,7 +198,7 @@ public abstract class Persona implements Cloneable{
 	 * @param posicion: Parametro de tipo int que representa la posicion de dicha linea de contratacion dentro de la lista de contrataciones.
 	 */
 	public void eliminaContratacion(int posicion) {
-		this.coleccionContrataciones.remove(posicion);
+		this.listaContrataciones.remove(posicion);
 
 	}
 	
@@ -216,63 +208,36 @@ public abstract class Persona implements Cloneable{
 	public String listarContrataciones() {
 		StringBuilder sb= new StringBuilder();
 		int i=0;
-		while(i<this.coleccionContrataciones.size()) {
-			sb.append("ID: " + this.coleccionContrataciones.get(i).getID()+" "+ this.coleccionContrataciones.get(i).toString()+"\n");
+		while(i<this.listaContrataciones.size()) {
+			sb.append("ID: " + this.listaContrataciones.get(i).getID()+" "+ this.listaContrataciones.get(i).toString()+"\n");
 
 			i++;
 		}
 		return sb.toString();	
 	}
+
+
+	//public I_ColeccionDeFacturas getColeccionDeFacturas() {
+	//	return coleccionDeFacturas;
+	//}
+
+	//public void setColeccionDeFacturas(I_ColeccionDeFacturas coleccionDeFacturas) {
+	//	this.coleccionDeFacturas = coleccionDeFacturas;
+	//}
+
 	
-	/**
-	 * Calcula el precio total a abonar aplicando el medio de pago
-	 * <b>Pre: </b> I_Contratable debe ser distinto de null <br>
-	 * <b>Post: </b> Se agrega una contratacion mas a la lista<br>
-	 * @param persona: Parametro de tipo Persona que representa al abonado de la factura
-	 * @param tipo: Parametro de tipo I_Pago que representa el medio de pago
-	 */
-	public void precioFinal(I_Pago tipo) {
-		double total=0;
-		for(int i=0;i<this.coleccionContrataciones.size();i++) {
-			total+=this.coleccionContrataciones.get(i).getPrecio();
-		}
-		this.totalSinP=total;
-		this.totalConP=this.aplicarPorcentaje(tipo, total);
-		
+	/*
+	public void agregarFactura(Factura factura,int mes) {
+		this.coleccionDeFacturas.put(mes, factura);
 	}
-
-	public ArrayList<I_Contratable> getColeccionContrataciones() {
-		return coleccionContrataciones;
-	}
-
-	public void setColeccionContrataciones(ArrayList<I_Contratable> coleccionContrataciones) {
-		this.coleccionContrataciones = coleccionContrataciones;
-	}
-
-	public I_ColeccionDeFacturas getColeccionDeFacturas() {
+	
+	public HashMap<Integer, Factura> getColeccionDeFacturas() {
 		return coleccionDeFacturas;
 	}
 
-	public void setColeccionDeFacturas(I_ColeccionDeFacturas coleccionDeFacturas) {
+	public void setColeccionDeFacturas(HashMap<Integer, Factura> coleccionDeFacturas) {
 		this.coleccionDeFacturas = coleccionDeFacturas;
-	}
-
-	public double getTotalSinP() {
-		return totalSinP;
-	}
-
-	public void setTotalSinP(double totalSinP) {
-		this.totalSinP = totalSinP;
-	}
-
-	public double getTotalConP() {
-		return totalConP;
-	}
-
-	public void setTotalConP(double totalConP) {
-		this.totalConP = totalConP;
-	}
-	
+	}*/
 	
 
 }

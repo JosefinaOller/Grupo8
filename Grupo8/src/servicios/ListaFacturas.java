@@ -8,30 +8,25 @@ import modelo.ColeccionGenerica;
 public class ListaFacturas extends ColeccionGenerica<I_Factura> implements I_ColeccionDeFacturas {
 
 	public ListaFacturas() {
-		
+		super();
 	}
 
 	public void agregarFactura(I_Factura factura, int mes) {
-		super.agregaElemento(factura, mes);		
+		super.agregaElemento(mes, factura);
+		
 	}
-
-	public void eliminarFactura(I_Factura factura) {
-		super.eliminarElemento(factura);		
+	
+	public I_Factura buscarFactura(int mes) {
+		return super.getElemento(mes);
 	}
-
-	public void pagarFactura(I_Factura factura) {
-				
-	}
-
-	/*
 	
 	public Iterator<I_Factura> getFacturaIterator() {
-		return super.getIterator();
-	} */
+		return super.getValuesIterator();
+	}
 
 	public int facturasSinPagar() {
 		int cant= 0;
-		Iterator<I_Factura> facturas= super.getKeyIterator();
+		Iterator<I_Factura> facturas= super.getValuesIterator();
 		while (facturas.hasNext()) {
 			if (!facturas.next().isPagado())
 				cant++;
@@ -48,4 +43,18 @@ public class ListaFacturas extends ColeccionGenerica<I_Factura> implements I_Col
 		}
 		return clonado;		
 	}
+	
+
+	
+	/*
+	public void eliminarFactura(I_Factura factura) {
+		
+	}
+	
+
+	public void pagarFactura(I_Factura factura) {
+				
+	}*/
+	
+	
 }

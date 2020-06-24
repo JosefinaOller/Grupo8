@@ -17,4 +17,4 @@ public class GestorDeFacturacion {
 			actual= personas.next();
 		}
 	}
-	
+}	

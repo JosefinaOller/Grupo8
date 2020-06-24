@@ -7,11 +7,11 @@ public interface I_ColeccionDeFacturas {
 
 	void agregarFactura(I_Factura factura, int mes);
 	
-	void eliminarFactura(I_Factura factura);
+	//void pagarFactura(I_Factura factura);
 	
-	void pagarFactura(I_Factura factura);
+	I_Factura buscarFactura(int mes);
 	
-	//Iterator<I_Factura> getFacturaIterator();
+	Iterator<I_Factura> getFacturaIterator();
 	
 	int facturasSinPagar();
 	
