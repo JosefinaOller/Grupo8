@@ -1,16 +1,18 @@
 package ModeloMVC;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import agregado.ContratableFactory;
 import excepciones.DomicilioInvalidoException;
 import excepciones.PersonaExistenteException;
 import excepciones.ServicioInternetInvalidoException;
 import interfaces.I_Sistema;
+import modelo.EmuladorPasoTiempo;
 import interfaces.I_Pago;
 import personas.Persona;
 import servicios.Domicilio;
-import servicios.Persona;
+import personas.Persona;
 
 public class SistemaContrataciones implements I_Sistema {
 	
@@ -20,7 +22,8 @@ public class SistemaContrataciones implements I_Sistema {
     /**
      * Constructor privado de SistemaContrataciones  pues aplicamos el patron Singleton
      */
-	private SistemaContrataciones () {}
+	private SistemaContrataciones () {
+	}
 	
 	/**
 	 * Metodo estatico para instanciar por unica vez SistemaContrataciones 
@@ -173,5 +176,8 @@ public class SistemaContrataciones implements I_Sistema {
 		return sb.toString();
 	}
 
+	public Iterator<Persona> getPersonas(){
+		return this.listaAbonados.values().iterator();
+	}
 
 }
