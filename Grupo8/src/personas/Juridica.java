@@ -1,6 +1,7 @@
 package personas;
 
 import interfaces.I_Pago;
+import servicios.I_ColeccionDeFacturas;
 
 /**
  * @author Grupo8
@@ -16,6 +17,7 @@ public class Juridica extends Persona {
 	 * @param nombre : parametro de tipo String que representa el nombre de la persona juridica
 	 * @param CUIT : parametro de tipo int que representa el CUIT de la persona juridica 
 	 */
+	
 	public Juridica(String nombre, int CUIT) {
 		super(nombre);
 		this.CUIT=CUIT;
